@@ -8,7 +8,7 @@ Module.register("MMM-Habitica",{
 		animationSpeed: 1000,
 		result: {},
 		jsonData: {},
-		stations: [],
+		//stations: [],
 	},
 
 	start: function() {
@@ -67,15 +67,56 @@ Module.register("MMM-Habitica",{
 
 	},
 	updateHabitica: function() {
-		this.config.jsonData = {};
-		this.config.stations = [];
-		this.sendSocketNotification('RELOAD',this.config);
+
+        console.log("updateHabitica");
+
+        var self = this;
+
+        this.config.jsonData = {};
+		//this.config.stations = [];
+
+		this.config.habiticaAPIResources.forEach(function(resource) {
+			switch (resource) {
+				case 'members':
+					self.updateMembers();
+                    //self.updateHabitica();
+					break;
+			}
+		});
+
+        //this.sendSocketNotification('RELOAD',this.config);
 	},
+    updateMembers: function () {
+
+        let self = this;
+        //let config = this.config;
+
+		let requests = [];
+
+        if(typeof self.config.membersID != undefined) {
+            self.config.membersID.forEach(function(memberID) {
+
+                var requestOptions = {
+                    hostname: self.config.habiticaURL,
+                    port: self.config.habiticaPORT,
+                    path: self.config.habiticaAPIPath + "/members/" + memberID,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+
+                requests.push(requestOptions);
+			})
+
+            self.sendSocketNotification('RELOAD',requests)
+		}
+    },
 	socketNotificationReceived: function(notification, payload) {
 
 		console.log(notification, payload);
 
-		for (var key in payload.values){
+		/*for (var key in payload.values){
 				var attrName = key;
 				var attrValue = payload.values[key];
 
@@ -96,7 +137,7 @@ Module.register("MMM-Habitica",{
 		if (notification === "RELOAD_DONE") {
 			this.loaded = true;
 			this.updateDom(this.animationSpeed);
-		}
+		}*/
 	}
 
 });
