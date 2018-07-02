@@ -70,10 +70,9 @@ Module.register("MMM-Habitica",{
 
         console.log("updateHabitica");
 
-        var self = this;
+        /*var self = this;
 
         this.config.jsonData = {};
-		//this.config.stations = [];
 
 		this.config.habiticaAPIResources.forEach(function(resource) {
 			switch (resource) {
@@ -82,9 +81,9 @@ Module.register("MMM-Habitica",{
                     //self.updateHabitica();
 					break;
 			}
-		});
+		});*/
 
-        //this.sendSocketNotification('RELOAD',this.config);
+        this.sendSocketNotification('RELOAD',this.config);
 	},
     updateMembers: function () {
 
@@ -92,9 +91,13 @@ Module.register("MMM-Habitica",{
         //let config = this.config;
 
 		let requests = [];
+		let requestsReturnData = [];
 
         if(typeof self.config.membersID != undefined) {
-            self.config.membersID.forEach(function(memberID) {
+
+            self.sendSocketNotification('RELOAD',self.config);
+
+            /*self.config.membersID.forEach(function(memberID) {
 
                 var requestOptions = {
                     hostname: self.config.habiticaURL,
@@ -107,13 +110,14 @@ Module.register("MMM-Habitica",{
                 };
 
                 requests.push(requestOptions);
-			})
+				self.sendSocketNotification('RELOAD',requestOptions);
+			})*/
 
-            self.sendSocketNotification('RELOAD',requests)
-		}
+        }
     },
 	socketNotificationReceived: function(notification, payload) {
 
+		console.log("socketNotifReceived");
 		console.log(notification, payload);
 
 		/*for (var key in payload.values){
