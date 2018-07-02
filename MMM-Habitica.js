@@ -7,7 +7,7 @@ Module.register("MMM-Habitica",{
 		initialLoadDelay: 0,
 		animationSpeed: 1000,
 		result: {},
-		jsonData: {},
+		membersData: [],
 		//stations: [],
 	},
 
@@ -31,7 +31,7 @@ Module.register("MMM-Habitica",{
 	// Override dom generator.
 	getDom: function() {
 
-		var wrapper = document.createElement("div");
+        var wrapper = document.createElement("div");
 		var data = this.result;
 		if (!this.loaded) {
 			wrapper.innerHTML = "Loading...";
@@ -41,24 +41,58 @@ Module.register("MMM-Habitica",{
 		var tableWrap = document.createElement("table");
 		tableWrap.className = "small";
 
+        var titleLineWrapper = document.createElement("tr");
+        titleLineWrapper.className = "normal";
 
-		for (var c in this.config.stations) {
-			var station = this.config.stations[c];
+        var titleTD = document.createElement('td');
+        titleTD.className = "title bright align-left";
+        titleTD.innerHTML = "Joueur";
+        titleLineWrapper.appendChild(titleTD);
 
-			var sensorWrapper = document.createElement("tr");
-			sensorWrapper.className = "normal";
+        var levelTD = document.createElement('td');
+        levelTD.className = "time light align-right";
+        levelTD.innerHTML = "Niveau";
+        titleLineWrapper.appendChild(levelTD);
+
+        var XPTD = document.createElement('td');
+        XPTD.className = "time light align-right";
+        XPTD.innerHTML = "XP";
+        titleLineWrapper.appendChild(XPTD);
+
+        var HPTD = document.createElement('td');
+        HPTD.className = "time light align-right";
+        HPTD.innerHTML = "PV";
+        titleLineWrapper.appendChild(HPTD);
+
+        tableWrap.appendChild(titleLineWrapper);
+
+		for (var member in this.config.membersData) {
+			var member = this.config.membersData[member];
+
+            var memberWrapper = document.createElement("tr");
+			memberWrapper.className = "normal";
 
 			var titleTD = document.createElement('td');
 			titleTD.className = "title bright align-left";
-			titleTD.innerHTML = station.name;
-			sensorWrapper.appendChild(titleTD);
+			titleTD.innerHTML = member.data.profile.name;
+			memberWrapper.appendChild(titleTD);
 
-			var statusTD = document.createElement('td');
-			statusTD.className = "time light align-right";
-			statusTD.innerHTML = station.available_bikes;
-			sensorWrapper.appendChild(statusTD);
+			var levelTD = document.createElement('td');
+            levelTD.className = "time light align-right";
+            levelTD.innerHTML = member.data.stats.lvl;
+			memberWrapper.appendChild(levelTD);
 
-			tableWrap.appendChild(sensorWrapper);
+			var XPTD = document.createElement('td');
+            XPTD.className = "time light align-right";
+            XPTD.innerHTML = member.data.stats.exp;
+			memberWrapper.appendChild(XPTD);
+
+			var HPTD = document.createElement('td');
+            HPTD.className = "time light align-right";
+            HPTD.innerHTML = member.data.stats.hp;
+			memberWrapper.appendChild(HPTD);
+
+			tableWrap.appendChild(memberWrapper);
 
 		}
 
@@ -67,81 +101,18 @@ Module.register("MMM-Habitica",{
 
 	},
 	updateHabitica: function() {
-
-        console.log("updateHabitica");
-
-        /*var self = this;
-
-        this.config.jsonData = {};
-
-		this.config.habiticaAPIResources.forEach(function(resource) {
-			switch (resource) {
-				case 'members':
-					self.updateMembers();
-                    //self.updateHabitica();
-					break;
-			}
-		});*/
-
         this.sendSocketNotification('RELOAD',this.config);
 	},
-    updateMembers: function () {
-
-        let self = this;
-        //let config = this.config;
-
-		let requests = [];
-		let requestsReturnData = [];
-
-        if(typeof self.config.membersID != undefined) {
-
-            self.sendSocketNotification('RELOAD',self.config);
-
-            /*self.config.membersID.forEach(function(memberID) {
-
-                var requestOptions = {
-                    hostname: self.config.habiticaURL,
-                    port: self.config.habiticaPORT,
-                    path: self.config.habiticaAPIPath + "/members/" + memberID,
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                };
-
-                requests.push(requestOptions);
-				self.sendSocketNotification('RELOAD',requestOptions);
-			})*/
-
-        }
-    },
 	socketNotificationReceived: function(notification, payload) {
 
-		console.log("socketNotifReceived");
-		console.log(notification, payload);
+        if (notification === "RELOAD_DONE") {
+            this.config.membersData.push(payload);
 
-		/*for (var key in payload.values){
-				var attrName = key;
-				var attrValue = payload.values[key];
-
-				// "Dr Long  / Aubépins"
-				if(payload.values[key].gid == 789) {
-					this.config.stations.push(attrValue);
-				}
-				// Place antoinette
-				if(payload.values[key].gid == 1002) {
-					this.config.stations.push(attrValue);
-				}
-				// Gare de villeurbanne
-				if(payload.values[key].gid == 794) {
-					this.config.stations.push(attrValue);
-				}
-			}
-
-		if (notification === "RELOAD_DONE") {
-			this.loaded = true;
-			this.updateDom(this.animationSpeed);
-		}*/
+            if(this.config.membersData.length == this.config.membersID.length) {
+                this.loaded = true;
+                this.updateDom(this.animationSpeed);
+            }
+        }
 	}
 
 });

@@ -74,9 +74,15 @@ module.exports = NodeHelper.create({
     	let self = this;
         let membersData = {};
 
-        refConfig.membersID.forEach(function(memberID) {
+        refConfig.membersID.forEach(function(memberID, index) {
 
-        	var requestOptions = {
+            var reloadType = 'RELOAD_TEMP';
+
+            if(index+1 == refConfig.membersID.length) {
+                reloadType = 'RELOAD_DONE';
+            }
+
+            var requestOptions = {
                 hostname: refConfig.habiticaURL,
                 port: refConfig.habiticaPORT,
                 path: refConfig.habiticaAPIPath + "/members/" + memberID,
@@ -94,7 +100,7 @@ module.exports = NodeHelper.create({
         })
 	},
 
-	requestHabiticaApi: function(requestOptions) {
+	requestHabiticaApi: function(requestOptions, reloadType) {
 
         let self = this;
         let JSONParsed = {};
@@ -104,17 +110,12 @@ module.exports = NodeHelper.create({
             res.on('data', (chunk) => {
                 try{
                     JSONParsed = JSON.parse(chunk);
-                    //console.log(JSONParsed);
-                    //return JSONParsed;
-                    self.sendSocketNotification("RELOAD_DONE",JSONParsed);
-
+                    self.sendSocketNotification("RELOAD_DONE", JSONParsed);
                 }catch(error) {
                 }
             });
 
             res.on('end', () => {
-                console.log("res on end");
-                console.log(JSONParsed);
             });
 
             req.on('error', (e) => {
@@ -124,50 +125,8 @@ module.exports = NodeHelper.create({
         });
 
         req.end();
-
-
-
-        return 'toto';
 	}
 
-    /*requestHabiticaApi: function(requestOptions) {
-
-        let JSONParsed = {};
-
-        callback = function(response) {
-
-            res.setEncoding('utf8');
-            res.on('data', (chunk) => {
-                try{
-                    JSONParsed = JSON.parse(chunk);
-                    //console.log(JSONParsed);
-                    //return JSONParsed;
-                    //self.sendSocketNotification("RELOAD_DONE",JSONParsed);
-
-                }catch(error) {
-                }
-            });
-
-            res.on('end', () => {
-                console.log("res on end");
-                console.log(JSONParsed);
-            });
-
-            req.on('error', (e) => {
-                console.log(`problem with request: ${e.message}`);
-            });
-
-        }
-
-        var req = https.request(requestOptions, callback);
-
-
-        req.end();
-
-
-
-        return 'toto';
-    }*/
 
 });
 
