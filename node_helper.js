@@ -56,26 +56,30 @@ module.exports = NodeHelper.create({
         let self = this;
         let JSONParsed = {};
 
-        var req = https.request(requestOptions, (res) => {
-            res.setEncoding('utf8');
-            res.on('data', (chunk) => {
-                try{
-                    JSONParsed = JSON.parse(chunk);
-                }catch(error) {
-                }
+        return new Promise((resolve, reject) => {
+
+            var req = https.request(requestOptions, (res) => {
+                res.setEncoding('utf8');
+                res.on('data', (chunk) => {
+                    try{
+                        JSONParsed = JSON.parse(chunk);
+                    }catch(error) {
+                    }
+                });
+
+                res.on('end', () => {
+                    self.sendSocketNotification(reloadType, JSONParsed);
+                });
+
+                req.on('error', (e) => {
+                    console.log(`problem with request: ${e.message}`);
+                });
+
             });
 
-            res.on('end', () => {
-                self.sendSocketNotification(reloadType, JSONParsed);
-            });
+            req.end();
+        })
 
-            req.on('error', (e) => {
-                console.log(`problem with request: ${e.message}`);
-            });
-
-        });
-
-        req.end();
 	}
 
 
