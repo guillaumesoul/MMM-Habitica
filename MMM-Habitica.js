@@ -74,45 +74,48 @@ Module.register("MMM-Habitica",{
         tableWrap.appendChild(titleLineWrapper);
 
         for (var member in this.config.membersData) {
+
             var member = this.config.membersData[member];
 
-            var memberWrapper = document.createElement("tr");
-            memberWrapper.className = "normal";
+            if(typeof member.data != "undefined") {
+                var memberWrapper = document.createElement("tr");
+                memberWrapper.className = "normal";
 
-            var titleTD = document.createElement('td');
-            var logo = new Image()
-            switch(member.data.profile.name) {
-                case 'guillaume':
-                    logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_guillaume_transparent.png'
-                    break;
-                case 'mumu':
-                    logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
-                    break;
-                default:
-                    logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
-                    break;
+                var titleTD = document.createElement('td');
+                var logo = new Image()
+                switch(member.data.profile.name) {
+                    case 'guillaume':
+                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_guillaume_transparent.png'
+                        break;
+                    case 'mumu':
+                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
+                        break;
+                    default:
+                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
+                        break;
 
+                }
+                logo.setAttribute('width', '50px')
+                titleTD.appendChild(logo)
+                memberWrapper.appendChild(titleTD);
+
+                var levelTD = document.createElement('td');
+                levelTD.className = "time bright align-right";
+                levelTD.innerHTML = member.data.stats.lvl;
+                memberWrapper.appendChild(levelTD);
+
+                var XPTD = document.createElement('td');
+                XPTD.className = "time bright align-right";
+                XPTD.innerHTML = parseFloat(member.data.stats.exp).toFixed(0);
+                memberWrapper.appendChild(XPTD);
+
+                var HPTD = document.createElement('td');
+                HPTD.className = "time bright align-right";
+                HPTD.innerHTML = parseFloat(member.data.stats.hp).toFixed(1);
+                memberWrapper.appendChild(HPTD);
+
+                tableWrap.appendChild(memberWrapper);
             }
-            logo.setAttribute('width', '50px')
-            titleTD.appendChild(logo)
-            memberWrapper.appendChild(titleTD);
-
-            var levelTD = document.createElement('td');
-            levelTD.className = "time bright align-right";
-            levelTD.innerHTML = member.data.stats.lvl;
-            memberWrapper.appendChild(levelTD);
-
-            var XPTD = document.createElement('td');
-            XPTD.className = "time bright align-right";
-            XPTD.innerHTML = member.data.stats.exp;
-            memberWrapper.appendChild(XPTD);
-
-            var HPTD = document.createElement('td');
-            HPTD.className = "time bright align-right";
-            HPTD.innerHTML = member.data.stats.hp;
-            memberWrapper.appendChild(HPTD);
-
-            tableWrap.appendChild(memberWrapper);
 
         }
         return tableWrap;
