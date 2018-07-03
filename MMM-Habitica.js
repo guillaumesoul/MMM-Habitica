@@ -127,8 +127,6 @@ Module.register("MMM-Habitica",{
 
 	socketNotificationReceived: function(notification, payload) {
 
-        console.log(notification);
-
         var indexNotification = notification.replace(/[^\d]/g, '');
 		this.config.membersData[indexNotification] = payload;
 
