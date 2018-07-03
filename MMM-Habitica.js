@@ -23,13 +23,13 @@ Module.register("MMM-Habitica",{
 		// first update on start
 		self.updateHabitica();
 	},
+
 	getStyles: function() {
 	    return ['font-awesome.css', 'MMM-Habitica.css'];
 	},
 
 	// Override dom generator.
 	getDom: function() {
-
         var wrapper = document.createElement("div");
 		var data = this.result;
 		if (!this.loaded) {
@@ -37,8 +37,16 @@ Module.register("MMM-Habitica",{
 			wrapper.className = "dimmed light small";
 			return wrapper;
 		}
-		var tableWrap = document.createElement("table");
-		tableWrap.className = "small";
+
+		var HabiticaDataWrapper = this.getHabiticaDomWrapper();
+		wrapper.appendChild(HabiticaDataWrapper);
+		return wrapper;
+
+	},
+
+    getHabiticaDomWrapper: function() {
+        var tableWrap = document.createElement("table");
+        tableWrap.className = "small";
 
         var titleLineWrapper = document.createElement("tr");
         titleLineWrapper.className = "normal";
@@ -65,73 +73,63 @@ Module.register("MMM-Habitica",{
 
         tableWrap.appendChild(titleLineWrapper);
 
-		for (var member in this.config.membersData) {
-			var member = this.config.membersData[member];
+        for (var member in this.config.membersData) {
+            var member = this.config.membersData[member];
 
             var memberWrapper = document.createElement("tr");
-			memberWrapper.className = "normal";
+            memberWrapper.className = "normal";
 
-			var titleTD = document.createElement('td');
-
+            var titleTD = document.createElement('td');
             var logo = new Image()
-			switch(member.data.profile.name) {
-				case 'guillaume':
+            switch(member.data.profile.name) {
+                case 'guillaume':
                     logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_guillaume_transparent.png'
-					break;
-				case 'mumu':
+                    break;
+                case 'mumu':
                     logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
-					break;
+                    break;
+                default:
+                    logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
+                    break;
 
-			}
-
+            }
             logo.setAttribute('width', '50px')
             titleTD.appendChild(logo)
+            memberWrapper.appendChild(titleTD);
 
-			memberWrapper.appendChild(titleTD);
-
-			var levelTD = document.createElement('td');
+            var levelTD = document.createElement('td');
             levelTD.className = "time bright align-right";
             levelTD.innerHTML = member.data.stats.lvl;
-			memberWrapper.appendChild(levelTD);
+            memberWrapper.appendChild(levelTD);
 
-			var XPTD = document.createElement('td');
+            var XPTD = document.createElement('td');
             XPTD.className = "time bright align-right";
             XPTD.innerHTML = member.data.stats.exp;
-			memberWrapper.appendChild(XPTD);
+            memberWrapper.appendChild(XPTD);
 
-			var HPTD = document.createElement('td');
+            var HPTD = document.createElement('td');
             HPTD.className = "time bright align-right";
             HPTD.innerHTML = member.data.stats.hp;
-			memberWrapper.appendChild(HPTD);
+            memberWrapper.appendChild(HPTD);
 
-			tableWrap.appendChild(memberWrapper);
+            tableWrap.appendChild(memberWrapper);
 
-		}
-
-		wrapper.appendChild(tableWrap);
-		return wrapper;
-
+        }
+        return tableWrap;
 	},
+
 	updateHabitica: function() {
-        console.log("updateHabitica");
         this.sendSocketNotification('RELOAD',this.config);
-
-        require(https);
 	},
+
 	socketNotificationReceived: function(notification, payload) {
 
-        if (notification === "RELOAD_FIRST") {
-            this.config.membersData = [];
-        }
+        var indexNotification = notification.replace(/[^\d]/g, '');
+		this.config.membersData[indexNotification] = payload;
 
-		this.config.membersData.push(payload);
-
-        if (notification === "RELOAD_DONE") {
-
-            if(this.config.membersData.length == this.config.membersID.length) {
-                this.loaded = true;
-                this.updateDom(this.animationSpeed);
-            }
+        if (this.config.membersData.length == this.config.membersID.length) {
+            this.loaded = true;
+            this.updateDom(this.animationSpeed);
         }
 	}
 

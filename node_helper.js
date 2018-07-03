@@ -34,15 +34,7 @@ module.exports = NodeHelper.create({
 
         refConfig.membersID.forEach(function(memberID, index) {
 
-            var reloadType = 'RELOAD_TEMP';
-
-            if(index == 0) {
-                reloadType = 'RELOAD_FIRST';
-            }
-
-            if(index+1 == refConfig.membersID.length) {
-                reloadType = 'RELOAD_DONE';
-            }
+            var reloadType = 'RELOAD_INDEX_'+index;
 
             var requestOptions = {
                 hostname: refConfig.habiticaURL,
@@ -53,8 +45,6 @@ module.exports = NodeHelper.create({
                     'Content-Type': 'application/json',
                 }
             };
-
-            console.log(reloadType);
 
             self.requestHabiticaApi(requestOptions, reloadType);
 
