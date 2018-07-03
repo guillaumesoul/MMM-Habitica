@@ -5,48 +5,6 @@ module.exports = NodeHelper.create({
 	start: function() {
 	},
 
-	/*reload: function(refConfig) {
-
-		var self=this;
-		self.httpsRequestData = '';
-
-		var options = {
-		  hostname: refConfig.habiticaURL,
-		  port: refConfig.habiticaPORT,
-		  path: refConfig.habiticaAPIPath,
-		  method: 'GET',
-		  headers: {
-		    'Content-Type': 'application/json',
-		 }
-		};
-
-
-
-		var req = https.request(options, (res) => {
-            res.setEncoding('utf8');
-			res.on('data', (chunk) => {
-					self.httpsRequestData += chunk;
-					try{
-						var JSONParsed = JSON.parse(self.httpsRequestData);
-						self.sendSocketNotification("RELOAD_DONE",JSONParsed);
-
-					}catch(error) {
-					}
-			});
-
-			res.on('end', () => {
-			});
-
-			req.on('error', (e) => {
-				console.log(`problem with request: ${e.message}`);
-			});
-
-		});
-
-		req.end();
-
-	},*/
-
     reload: function(refConfig) {
 
     	let self = this;
@@ -78,6 +36,10 @@ module.exports = NodeHelper.create({
 
             var reloadType = 'RELOAD_TEMP';
 
+            if(index == 0) {
+                reloadType = 'RELOAD_FIRST';
+            }
+
             if(index+1 == refConfig.membersID.length) {
                 reloadType = 'RELOAD_DONE';
             }
@@ -92,10 +54,9 @@ module.exports = NodeHelper.create({
                 }
             };
 
-        	var memberData = self.requestHabiticaApi(requestOptions);
-            /*console.log('test');
-            console.log(memberData);*/
+            console.log(reloadType);
 
+            self.requestHabiticaApi(requestOptions, reloadType);
 
         })
 	},
@@ -110,12 +71,12 @@ module.exports = NodeHelper.create({
             res.on('data', (chunk) => {
                 try{
                     JSONParsed = JSON.parse(chunk);
-                    self.sendSocketNotification("RELOAD_DONE", JSONParsed);
                 }catch(error) {
                 }
             });
 
             res.on('end', () => {
+                self.sendSocketNotification(reloadType, JSONParsed);
             });
 
             req.on('error', (e) => {

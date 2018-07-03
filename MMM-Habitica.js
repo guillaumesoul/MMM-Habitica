@@ -7,13 +7,12 @@ Module.register("MMM-Habitica",{
 		initialLoadDelay: 0,
 		animationSpeed: 1000,
 		result: {},
-		membersData: [],
-		//stations: [],
+		membersData: []
 	},
 
 	start: function() {
 
-		Log.log('LOG' + this.name + ' is started!');
+        Log.log('LOG' + this.name + ' is started!');
 		// Set locale.
 		moment.locale(config.language);
 		this.title = "Loading...";
@@ -114,12 +113,20 @@ Module.register("MMM-Habitica",{
 
 	},
 	updateHabitica: function() {
+        console.log("updateHabitica");
         this.sendSocketNotification('RELOAD',this.config);
+
+        require(https);
 	},
 	socketNotificationReceived: function(notification, payload) {
 
+        if (notification === "RELOAD_FIRST") {
+            this.config.membersData = [];
+        }
+
+		this.config.membersData.push(payload);
+
         if (notification === "RELOAD_DONE") {
-            this.config.membersData.push(payload);
 
             if(this.config.membersData.length == this.config.membersID.length) {
                 this.loaded = true;
