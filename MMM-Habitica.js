@@ -85,17 +85,17 @@ Module.register("MMM-Habitica",{
                 var logo = new Image()
                 switch(member.data.profile.name) {
                     case 'guillaume':
-                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_guillaume_transparent.png'
+                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_guillaume_cropped.png'
                         break;
                     case 'mumu':
-                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
+                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_cropped.png'
                         break;
                     default:
-                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_muriel_transparent.png'
+                        logo.src = 'modules/MMM-Habitica/public/Habitica_avatar_guillaume_cropped.png'
                         break;
 
                 }
-                logo.setAttribute('width', '50px')
+                logo.setAttribute('height', '50px')
                 titleTD.appendChild(logo)
                 memberWrapper.appendChild(titleTD);
 
